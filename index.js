@@ -9,10 +9,10 @@ let contactList
 let sentSMS = []
 
 /* Twilio Setup */
-let twilioConfig : {
-	const accountSid = process.env.accountSid
-	const authToken = process.env.authToken
-	const twilioNumber = process.env.twilioNumber	
+let twilioConfig = {
+	accountSid : process.env.accountSid,
+	authToken : process.env.authToken,
+	twilioNumber : process.env.twilioNumber	
 }
 const client = require('twilio')(twilioConfig.accountSid, twilioConfig.authToken)
 
@@ -84,7 +84,7 @@ app.get('/sendTwilio/:contactId', function(req, res){
 		client.messages
 		  .create({
 		     body: 'Your OTP is'+contact.otp,
-		     from: twilioNumber,
+		     from: twilioConfig.twilioNumber,
 		     to: contact.mobile
 		   })
 		  .then(message => console.log(message.sid))
@@ -102,4 +102,5 @@ app.get('/sendTwilio/:contactId', function(req, res){
 })
 
 // start the server
-app.listen('3000')
+port = process.env.PORT || 3000
+app.listen(port)
