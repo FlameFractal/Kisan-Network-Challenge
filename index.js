@@ -91,7 +91,6 @@ app.get('/sendTwilio/:contactId', function(req, res){
 		   })
 		  .then(message => console.log(message.sid))
 		  .catch(e => { console.error('Got an error:', e.code, e.message); });
-	      .done()
 
 	    sentSMS.push({"name": contact.name, "time": Date.now(), "otp": contact.otp})
 
