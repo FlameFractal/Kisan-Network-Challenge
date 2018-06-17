@@ -81,14 +81,14 @@ app.get('/sendTwilio/:contactId', function(req, res){
 	try{
 		var contactId = req.params.contactId
 		contact = contactList.find(c => c.id === parseInt(contactId))
-		// client.messages
-		//   .create({
-		//      body: 'Your OTP is'+contact.otp,
-		//      from: twilioNumber,
-		//      to: contact.mobile
-		//    })
-		//   .then(message => console.log(message.sid))
-	    // 	.done()
+		client.messages
+		  .create({
+		     body: 'Your OTP is'+contact.otp,
+		     from: twilioNumber,
+		     to: contact.mobile
+		   })
+		  .then(message => console.log(message.sid))
+	    	.done()
 
 	    sentSMS.push({"name": contact.name, "time": Date.now(), "otp": contact.otp})
 
