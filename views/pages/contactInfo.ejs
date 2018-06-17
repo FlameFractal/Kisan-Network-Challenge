@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<% include ../partials/head %>
+</head>
+<body>
+
+	<% include ../partials/header %>
+
+	<div class="container">	
+	  	<br>
+	  	<h2><%= contact.name %></h2>
+	  	<ul>
+	        <li><%= contact.mobile %></a></li>
+	    </ul>
+	    <a class="btn btn-primary" href="/sendSMS/<%= contact.id %>" role="button">Send OTP</a>
+
+	</div>
+
+	
+	<% include ../partials/footer %>
+
+</body>
+</html>

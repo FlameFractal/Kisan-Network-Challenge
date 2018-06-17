@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<% include ../partials/head %>
+</head>
+<body>
+
+	<% include ../partials/header %>
+
+	<div class="container">	
+	  	<br>
+	  	<input type="text" value="Your OTP is <%= contact.otp %>" disabled="true">
+	    <a class="btn btn-primary" href="/sendTwilio/<%= contact.id %>" role="button">Send</a>
+
+	</div>
+
+	
+	<% include ../partials/footer %>
+
+</body>
+</html>

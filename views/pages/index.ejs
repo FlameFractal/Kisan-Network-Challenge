@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<% include ../partials/head %>
+</head>
+<body>
+
+	<% include ../partials/header %>
+
+	<div class="container">	
+
+		<ul class="nav nav-pills" id="mainTab" role="tablist">
+		  <li class="nav-item">
+		    <a class="nav-link active" id="contact-list-tab" data-toggle="pill" href="#contact-list" role="tab">Contact List</a>
+		  </li>
+		  <li class="nav-item">
+		    <a class="nav-link" id="sent-sms-tab" data-toggle="pill" href="#sent-sms" role="tab">Sent SMSes</a>
+		  </li>
+		</ul>
+
+		<div class="tab-content" id="mainTabContent">
+		  <div class="tab-pane fade show active" id="contact-list" role="tabpanel">
+		  	<br>
+		  	<% contactList.forEach(function(contact) { %>
+		        <li><a href='contactInfo/<%=contact.id%>'><%= contact.name %></a></li>
+		    <% }); %>
+
+		  </div>
+		  <div class="tab-pane fade" id="sent-sms" role="tabpanel">
+		  	<br>
+		  	<% sentSMS.forEach(function(sms){ %>
+		  		<li>Name: <%= sms.name %> , Time(unix): <%= sms.time %> , OTP: <%= sms.otp %> </li>
+		  <% }) %>
+		  </div>
+		</div>
+
+	</div>
+
+	
+	<% include ../partials/footer %>
+
+</body>
+</html>

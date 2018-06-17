@@ -1,0 +1,17 @@
+{
+  "name": "kisanchallenge",
+  "version": "1.0.0",
+  "description": "kisan challenge",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "author": "flamefractal",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "request": "^2.87.0",
+    "twilio": "^3.17.3"
+  }
+}
