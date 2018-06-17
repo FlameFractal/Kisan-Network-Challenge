@@ -2,19 +2,12 @@ const path = require('path')
 const request = require('request')
 const express = require('express')
 const app = express()
+
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
 let contactList 
 let sentSMS = []
-
-/* Twilio Setup */
-let twilioConfig = {
-	accountSid : process.env.accountSid,
-	authToken : process.env.authToken,
-	twilioNumber : process.env.twilioNumber	
-}
-const client = require('twilio')(twilioConfig.accountSid, twilioConfig.authToken)
 
 /* Fetch JSON of Contact List once */
 const contactListJSONUrl = process.env.contactListJSONUrl
@@ -28,6 +21,15 @@ request({
     	console.log(error)
     }
 })
+
+/* Twilio Setup */
+let twilioConfig = {
+	accountSid : process.env.accountSid,
+	authToken : process.env.authToken,
+	twilioNumber : process.env.twilioNumber	
+}
+const client = require('twilio')(twilioConfig.accountSid, twilioConfig.authToken)
+
 
 /* Define all the routes here */
 
@@ -88,7 +90,8 @@ app.get('/sendTwilio/:contactId', function(req, res){
 		     to: contact.mobile
 		   })
 		  .then(message => console.log(message.sid))
-	    	.done()
+		  .catch(e => { console.error('Got an error:', e.code, e.message); });
+	      .done()
 
 	    sentSMS.push({"name": contact.name, "time": Date.now(), "otp": contact.otp})
 
