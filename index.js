@@ -6,29 +6,36 @@ const app = express()
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
-let contactList 
-let sentSMS = []
-
-/* Fetch JSON of Contact List once */
-const contactListJSONUrl = process.env.contactListJSONUrl
-request({
-    url: contactListJSONUrl,
-    json: true
-}, function (error, response, body) {
-    if (!error && response.statusCode === 200) {
-		contactList = body
-    } else {
-    	console.log(error)
-    }
-})
-
-/* Twilio Setup */
-let twilioConfig = {
-	accountSid : process.env.accountSid,
-	authToken : process.env.authToken,
-	twilioNumber : process.env.twilioNumber	
+function getContactList(){
+	/* Fetch JSON of Contact List once */
+	const contactListJSONUrl = process.env.contactListJSONUrl
+	request({
+	    url: contactListJSONUrl,
+	    json: true
+	}, function (error, response, body) {
+	    if (!error && response.statusCode === 200) {
+			getContactList.contactList = body
+	    } else {
+	    	console.log(error)
+	    }
+	})
 }
-const client = require('twilio')(twilioConfig.accountSid, twilioConfig.authToken)
+
+function addSentSMS(msg){
+	if(typeof setSetSMS.sentSMS == 'undefined')
+		addSentSMS.sentSMS = {}
+	addSentSMS.sentSMS.push(msg)
+}
+
+function initTwilio(){
+	/* Twilio Setup */
+	initTwilio.twilioConfig = {
+		accountSid : process.env.accountSid,
+		authToken : process.env.authToken,
+		twilioNumber : process.env.twilioNumber	
+	}
+	initTwilio.client = require('twilio')(initTwilio.twilioConfig.accountSid, initTwilio.twilioConfig.authToken)
+}
 
 
 /* Define all the routes here */
@@ -37,9 +44,9 @@ const client = require('twilio')(twilioConfig.accountSid, twilioConfig.authToken
 app.get('/',function(req, res){
 	try{
 		// sort sms by descending time
-		sentSMS = sentSMS.sort((a,b) => {return b.time - a.time})
+		sentSMS = addSentSMS.sentSMS.sort((a,b) => {return b.time - a.time})
 		res.render('pages/index',{
-			contactList: contactList,
+			contactList: getContactList.contactList,
 			sentSMS: sentSMS
 		})	
 	} catch (e) {
@@ -52,7 +59,7 @@ app.get('/',function(req, res){
 app.get('/contactInfo/:contactId',function(req, res){
 	try{
 		var contactId = req.params.contactId
-		contact = contactList.find(c => c.id === parseInt(contactId))
+		contact = getContactList.contactList.find(c => c.id === parseInt(contactId))
 		console.log(contact.name)
  		res.render('pages/contactInfo', {
 			contact : contact,
@@ -67,7 +74,7 @@ app.get('/contactInfo/:contactId',function(req, res){
 app.get('/sendSMS/:contactId',function(req, res){
 	try {
 		var contactId = req.params.contactId
-		contact = contactList.find(c => c.id === parseInt(contactId))
+		contact = getContactList.contactList.find(c => c.id === parseInt(contactId))
 		contact.otp = Math.floor(Math.random()*(999999-100000)+100000)
 		res.render('pages/sendSMS', {
 			contact : contact
@@ -82,17 +89,17 @@ app.get('/sendSMS/:contactId',function(req, res){
 app.get('/sendTwilio/:contactId', function(req, res){
 	try{
 		var contactId = req.params.contactId
-		contact = contactList.find(c => c.id === parseInt(contactId))
-		client.messages
+		contact = getContactList.contactList.find(c => c.id === parseInt(contactId))
+		initTwilio.client.messages
 		  .create({
 		     body: 'Your OTP is'+contact.otp,
-		     from: twilioConfig.twilioNumber,
+		     from: initTwilio.twilioConfig.twilioNumber,
 		     to: contact.mobile
 		   })
 		  .then(message => console.log(message.sid))
 		  .catch(e => { console.error('Got an error:', e.code, e.message); });
 
-	    sentSMS.push({"name": contact.name, "time": Date.now(), "otp": contact.otp})
+	    addSentSMS({"name": contact.name, "time": Date.now(), "otp": contact.otp})
 
 		res.render('pages/sendTwilio', {
 			otp: contact.otp
@@ -105,4 +112,6 @@ app.get('/sendTwilio/:contactId', function(req, res){
 
 // start the server
 port = process.env.PORT || 3000
+getContactList()
+initTwilio()
 app.listen(port)
